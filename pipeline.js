@@ -1,4 +1,11 @@
 /////////////
+// CONSTANTS
+/////////////
+
+BASE_WIDTH = 960;
+BASE_HEIGHT = 600;
+
+/////////////
 // VARIABLES
 /////////////
 
@@ -13,144 +20,116 @@ instrE = "addiu $zero $zero $zero";
 instrM = "addiu $zero $zero $zero";
 instrW = "addiu $zero $zero $zero";
 
-convertHexToMips("014B4820");
+// Color dictionary
+colorDict = {};
+
+function getColor(instr) {
+	if (!(instr in colorDict)) {
+		colorDict[instr] = color("hsb(" + Math.floor(Math.random() * 360) + ", 100%, 50%)");
+	}
+	return colorDict[instr]
+}
+
 /////////
 // CODES
 /////////
 
+function preload() {
+	myFont = loadFont('assets/OpenSans-Regular.ttf');
+}
+
 /* Creates the smodules */
 function setup() {
 
+	// Ratio
+	RATIO = window.innerWidth/BASE_WIDTH;
+
+	// Texts
+	fill('#FFFFFF');
+	textFont(myFont);
+
 	// Create the canvas
-  createCanvas(960, 400);
-  background(200);
+  myCanvas = createCanvas(window.innerWidth, window.innerHeight);
+	myCanvas.parent("sketch-holder");
+  background(255);
 
   // Set colors
   fill(70, 101, 192, 127);
-  stroke(127, 63, 120);
-
-	//rect(x,   y,  w,  h );
-  rect(40, 80, 20, 250); // PC pipeline register
-  
-  rect(80, 150, 120, 100); // Fetch
-
-  rect(220, 80, 20, 250); // FD pipline register
- 
-  rect(260, 150, 120, 100); // Decode
-
-  rect(400, 80, 20, 250); // DE pipeline register
-
-  rect(440, 150, 120, 100); // Execute
-
-  rect(580, 80, 20, 250); // EM pipeline register
-
-  rect(620, 150, 120, 100); // Memory
-
-  rect(760, 80, 20, 250); // MW pipeline register
-
-  rect(800, 150, 120, 100); // Write
-
-	// Title
-	textSize(32);
-	fill(0, 0, 0);
-	text(title, 280, 40); // Fetch
-
-  // Stage instructions
-	textSize(10);
-	fill(999, 999, 999);
-	text(instrF, 85, 200); // Fetch
-
-	fill(999, 999, 999);
-	text(instrD, 265, 200); // Decode
-
-	fill(999, 999, 999);
-	text(instrE, 445, 200); // Execute
-
-	fill(999, 999, 999);
-	text(instrM, 625, 200); // Memory
-	
-	fill(999, 999, 999);
-	text(instrW, 805,200); // Write
-
-	textSize(20);
-	fill(999, 999, 999);
-	text(clkStr, 30,30); // Write
+  //stroke(127, 63, 120);
+	noStroke();
 }
 
 
-
 function draw() {
-	background(200);
+	background(255);
 
 	// Forward and Backward Buttons
-  rect(840, 350, 40, 20); // Backward
-  rect(885, 350, 40, 20); // Forward
-  textSize(20);
-  fill(0, 0, 0);
-  text("<", 855, 365); // Fetch
-  text(">", 900, 365); // Fetch
-
-  // Set colors
+  rect(840 * RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Backward
+  rect(885* RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Forward
+  textSize(20* RATIO);
   fill(70, 101, 192, 127);
-  stroke(127, 63, 120);
+  text("<", 855* RATIO, 365* RATIO); // Fetch
+  text(">", 900* RATIO, 365* RATIO); // Fetch
 
 	//rect(x,   y,  w,  h );
-  rect(40, 80, 20, 250); // PC pipeline register
+  rect(40* RATIO, 80* RATIO, 20* RATIO, 250* RATIO); // PC pipeline register
+	rect(220* RATIO, 80* RATIO, 20* RATIO, 250* RATIO); // FD pipline register
+	rect(400* RATIO, 80* RATIO, 20* RATIO, 250* RATIO); // DE pipeline register
+	rect(580* RATIO, 80* RATIO, 20* RATIO, 250* RATIO); // EM pipeline register
+	rect(760* RATIO, 80* RATIO, 20* RATIO, 250* RATIO); // MW pipeline register
 
-  rect(80, 150, 120, 100); // Fetch
+	// All boxes
+	fill(getColor(instrF));
+  rect(80* RATIO, 150* RATIO, 120* RATIO, 100* RATIO); // Fetch
 
-  rect(220, 80, 20, 250); // FD pipline register
+	fill(getColor(instrD));
+  rect(260* RATIO, 150* RATIO, 120* RATIO, 100* RATIO); // Decode
 
-  rect(260, 150, 120, 100); // Decode
+	fill(getColor(instrE));
+  rect(440* RATIO, 150* RATIO, 120* RATIO, 100* RATIO); // Execute
 
-  rect(400, 80, 20, 250); // DE pipeline register
+	fill(getColor(instrM));
+  rect(620* RATIO, 150* RATIO, 120* RATIO, 100* RATIO); // Memory
 
-  rect(440, 150, 120, 100); // Execute
-
-  rect(580, 80, 20, 250); // EM pipeline register
-
-  rect(620, 150, 120, 100); // Memory
-
-  rect(760, 80, 20, 250); // MW pipeline register
-
-  rect(800, 150, 120, 100); // Write
+	fill(getColor(instrW));
+  rect(800* RATIO, 150* RATIO, 120* RATIO, 100* RATIO); // Write
 
 	// Title
-	textSize(32);
+	textSize(32*RATIO);
 	fill(0, 0, 0);
-	text(title, 280, 40); // Fetch
+	text(title, 280* RATIO, 40* RATIO); // Fetch
 
   // Stage instructions
-	textSize(10);
+	textSize(10 * RATIO);
 	fill(999, 999, 999);
-	text(instrF, 85, 200); // Fetch
+	text(instrF, 85* RATIO, 200* RATIO); // Fetch
 
 	fill(999, 999, 999);
-	text(instrD, 265, 200); // Decode
+	text(instrD, 265* RATIO, 200* RATIO); // Decode
 
 	fill(999, 999, 999);
-	text(instrE, 445, 200); // Execute
+	text(instrE, 445* RATIO, 200* RATIO); // Execute
 
 	fill(999, 999, 999);
-	text(instrM, 625, 200); // Memory
+	text(instrM, 625* RATIO, 200* RATIO); // Memory
 	
 	fill(999, 999, 999);
-	text(instrW, 805,200); // Write
+	text(instrW, 805* RATIO, 200* RATIO); // Write
 
-	textSize(20);
+	textSize(20 * RATIO);
 	fill(999, 999, 999);
-	text(clkStr, 30,30); // Write
+	text(clkStr, 30* RATIO,30* RATIO); // Write
 	}
 
 function mousePressed() {
   clear(); // resets the diagram
   // Check which button was pressed
-  btnHeight = 20;
-  btnWidth = 40;
-  prevX = 840;
-  prevY = 350;
-  nextX = 885;
-  nextY = 350;
+  btnHeight = 20 * RATIO;
+  btnWidth = 40 * RATIO;
+  prevX = 840 * RATIO;
+  prevY = 350 * RATIO;
+  nextX = 885 * RATIO;
+  nextY = 350 * RATIO;
   if (inRange(prevX,prevY,btnWidth,btnHeight)) { // prev clicked
   	// Updating the clock
   	clk = clk - 1;
@@ -181,4 +160,18 @@ function inRange(x,y,w,h) {
 function submitInfo() {
 	input_element = document.getElementById("pipeline_info").value;
 	parseInfo(input_element);
+}
+
+function onResize() {
+
+	// Resize the HTML
+	//canvasElement = document.getElementById("sketch-holder");
+	//canvasElement.
+	// Resize P5
+	RATIO = window.innerWidth/BASE_WIDTH;
+	try {
+		myCanvas.resizeCanvas(window.innerWidth, window.innerHeight, noRedraw = false);
+	} catch (e) {
+		console.log("CATCH!")
+	}
 }
