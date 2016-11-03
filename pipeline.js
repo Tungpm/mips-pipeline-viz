@@ -81,6 +81,14 @@ function setup() {
 function draw() {
 	background(200);
 
+	// Forward and Backward Buttons
+  rect(840, 350, 40, 20); // Backward
+  rect(885, 350, 40, 20); // Forward
+  textSize(20);
+  fill(0, 0, 0);
+  text("<", 855, 365); // Fetch
+  text(">", 900, 365); // Fetch
+
   // Set colors
   fill(70, 101, 192, 127);
   stroke(127, 63, 120);
@@ -134,9 +142,31 @@ function draw() {
 	}
 
 function mousePressed() {
-  clear();
-  clk = clk + 1;
-  clkStr = "Clock: "+clk;
+  clear(); // resets the diagram
+  // Check which button was pressed
+  btnHeight = 20;
+  btnWidth = 40;
+  prevX = 840;
+  prevY = 350;
+  nextX = 885;
+  nextY = 350;
+  if (inRange(prevX,prevY,btnWidth,btnHeight)) { // prev clicked
+  	// Updating the clock
+  	clk = clk - 1;
+  	clkStr = "Clock: "+clk;
+  } else if (inRange(nextX,nextY,btnWidth,btnHeight)) {
+  	// Updating the clock
+  	clk = clk + 1;
+  	clkStr = "Clock: "+clk;
+  }
+}
+
+function inRange(x,y,w,h) {
+  if ( (mouseX>x & mouseX<(x+w)) & (mouseY>y & mouseY<(y+h)) ) {
+  	return true;
+  } else {
+  	return false;
+  }
 }
 
 function parseInstructions() {
