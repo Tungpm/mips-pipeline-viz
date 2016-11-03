@@ -269,6 +269,9 @@ function searchIns(bin){
  * @returns {string}
  */
 function convertHexToMips(hex) {
+    // Return NOP if hex == 00000000
+    if (hex == "00000000") return "NOP";
+
     var bin = hexToBinary(hex);
     var insObj = searchIns(bin);
 

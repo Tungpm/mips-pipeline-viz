@@ -13,6 +13,7 @@ instrE = "addiu $zero $zero $zero";
 instrM = "addiu $zero $zero $zero";
 instrW = "addiu $zero $zero $zero";
 
+convertHexToMips("014B4820");
 /////////
 // CODES
 /////////
@@ -95,11 +96,11 @@ function draw() {
 
 	//rect(x,   y,  w,  h );
   rect(40, 80, 20, 250); // PC pipeline register
-  
+
   rect(80, 150, 120, 100); // Fetch
 
   rect(220, 80, 20, 250); // FD pipline register
- 
+
   rect(260, 150, 120, 100); // Decode
 
   rect(400, 80, 20, 250); // DE pipeline register
@@ -159,6 +160,14 @@ function mousePressed() {
   	clk = clk + 1;
   	clkStr = "Clock: "+clk;
   }
+
+	// Grab the new information from the new clock cycle
+	var new_info = getInfo(clk);
+	instrF = new_info[1];
+	instrD = new_info[2];
+	instrE = new_info[3];
+	instrM = new_info[4];
+	instrW = new_info[5];
 }
 
 function inRange(x,y,w,h) {
@@ -169,6 +178,7 @@ function inRange(x,y,w,h) {
   }
 }
 
-function parseInstructions() {
-
+function submitInfo() {
+	input_element = document.getElementById("pipeline_info").value;
+	parseInfo(input_element);
 }
