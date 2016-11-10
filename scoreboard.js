@@ -1,8 +1,9 @@
 
 // FUNCTIONAL UNIT
-function FunctionalUnit(type, name) {
+function FunctionalUnit(name, type, latency) {
     this.type = type;
     this.name = name;
+    this.latency = latency;
 
     this.isBusy = false;
     this.op = 0;
@@ -34,10 +35,47 @@ function Instruction(instr) {
 
 // SCOREBOARD
 function ScoreBoard() {
-    this.instructions = new Array();
-    this.functionalUnits = new Array();
-
+    this.instructions = [];
+    this.functionalUnits = [];
+    this.CLK = 0;
 }
+
+//Initialize the functional units
+ScoreBoard.prototype.initialize = function(
+    Integer_Count, Integer_Latency,
+    Add_Count, Add_Latency,
+    Mult_Count, Mult_Latency,
+    Div_Count, Div_Latency,
+    Load_Count, Load_Latency,
+    Store_Count, Store_Latency) {
+    this.functionalUnits = [];
+
+    for (count = 1; count <= Integer_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('INT'+count, 'INT', Integer_Latency));
+    }
+    for (count = 1; count <= Add_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('ADD'+count, 'ADD', Add_Latency));
+    }
+    for (count = 1; count <= Mult_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('MULT'+count, 'MULT', Mult_Latency));
+    }
+    for (count = 1; count <= Div_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('DIV'+count, 'DIV', Div_Latency));
+    }
+    for (count = 1; count <= Load_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('LOAD'+count, 'LOAD', Load_Latency));
+    }
+    for (count = 1; count <= Store_Count; count++) {
+        this.functionalUnits.push(new FunctionalUnit('STORE'+count, 'STORE', Store_Latency));
+    }
+}
+
+ScoreBoard.prototype.loadInstructions = function() {
+    //TODO: Parse the instructions in
+    this.instructions = [];
+    this.CLK = 0;
+}
+
 
 ScoreBoard.prototype.next = function() {
     // Update
