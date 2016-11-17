@@ -92,9 +92,11 @@ ScoreBoard.prototype.loadInstructions = function() {
     var inputText = $(".instructs").val();
     /* Parse the instructions */
     var instructs = inputText.split("\n");
-    for (var l=0; l < instructs.length; l++) {
+    
+    for (var l=0; l < instructs.length; l++) {           
         this.instructions.push(new Instruction(instructs[l]));
     }
+    
 
 }
 
@@ -185,7 +187,13 @@ function InitFUTable() {
 }
 
 function InitInstrStatusTable() {
-    s.loadInstructions();
+    $(".errorBox").html("");
+    try {
+        s.loadInstructions();
+    } catch (e) {
+        $(".errorBox").html("Error in the Instruction List");
+    }
+    
     s.displayInst();
 }
 function clockForward() {

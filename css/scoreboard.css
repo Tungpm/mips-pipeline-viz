@@ -81,6 +81,7 @@ table,th,td {
 	font-weight: bold;
 	display: inline-block;
 	overflow: scroll;
+	overflow-x: hidden;
 }
 
 .ControlBox {
