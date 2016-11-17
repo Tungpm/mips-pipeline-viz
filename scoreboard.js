@@ -21,7 +21,6 @@ var FunctionalUnit = function (name, type, latency) {
 // INSTRUCTION
 var Instruction = function (instr) {
     // Parsing the components of the instruction
-    //TODO: Change to actual parsing
     var pieces_arr = getInstructionPieces(instr);
 
     this.type = pieces_arr[0];
@@ -89,6 +88,13 @@ ScoreBoard.prototype.loadInstructions = function() {
     this.instructions = [];
     this.CLK = 0;
 
+    /* Get the inputed instructions */
+    var inputText = $(".instructs").val();
+    /* Parse the instructions */
+    var instructs = inputText.split("\n");
+    for (var l=0; l < instructs.length; l++) {
+        this.instructions.push(new Instruction(instructs[l]));
+    }
 
 }
 
@@ -130,6 +136,38 @@ ScoreBoard.prototype.displayFU = function() {
 
     $("#clock").html("Clock: "+s.clk);
 }
+
+ScoreBoard.prototype.displayInst = function() {
+    /* Create html for instruction status table */
+    var InstructStatusHTML = "<table class='InstructStatusTable'>";
+    InstructStatusHTML += "<tr>";
+    InstructStatusHTML += "<th>Instruction</th>";
+    InstructStatusHTML += "<th>i</th>";
+    InstructStatusHTML += "<th>j</th>";
+    InstructStatusHTML += "<th>k</th>";
+    InstructStatusHTML += "<th>FU</th>";
+    InstructStatusHTML += "<th>Issue</th>";
+    InstructStatusHTML += "<th>Read</th>";
+    InstructStatusHTML += "<th>Execute</th>";
+    InstructStatusHTML += "<th>Write</th>";
+    InstructStatusHTML += "</tr>";
+    // loop through each of the inputed instructions
+    for (var i=0; i < this.instructions.length; i++) {
+        var inst = this.instructions[i];
+        InstructStatusHTML += "<tr>";
+
+        InstructStatusHTML += "<td>"+inst.type+"</td><td>" +
+            inst.f_i+"</td><td>" + inst.f_j+"</td><td>" + inst.f_k+"</td><td>" +
+            ((inst.functionalUnit == null)?"":inst.functionalUnit.name)+"</td><td>"+
+            inst.issueTime+"</td><td>" + inst.readTime+"</td><td>" + inst.executeCompleteTime+"</td><td>" +
+            inst.writeTime+"</td>";
+        InstructStatusHTML += "</tr>";
+    }
+    InstructStatusHTML += "</table>";
+    /* Add HTML */
+    $(".InstructStatusContainer").html(InstructStatusHTML);
+
+}
 ScoreBoard.prototype.next = function() {
     // Update
     this.clk = this.clk + 1;
@@ -147,7 +185,8 @@ function InitFUTable() {
 }
 
 function InitInstrStatusTable() {
-
+    s.loadInstructions();
+    s.displayInst();
 }
 function clockForward() {
     s.next();
