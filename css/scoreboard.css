@@ -66,33 +66,43 @@ table,th,td {
 
 
 
+.bigBox {
+	padding: 5px 5px 5px 5px;
+	margin: 10px 10px 10px 10px;
+	height: 30px;
+	line-height: 30px;
+}
 
+.errorBox {
+	width: 70%;
+	height: 100%;
+	color: #d80000;
+	background-color: #efefef;
+	font-weight: bold;
+	display: inline-block;
+}
 
 .ControlBox {
+	width: 30%;
+	min-width: 200px;
+	height: 100%;
 	float: right;
 	background-color: #bababa;
 	display: inline-block;
-	text-align: center;
-	padding: 5px 5px 5px 5px;
-	margin: 10px 10px 10px 10px;
-}
-.errorBox {
-	display: inline-block;
-	color: red;
-	background-color: black;
-
+	text-align: right;
 }
 .clk {
+	text-align: center;
 	display: inline-block;
-	width: 100px;
 	height: 20px;
 }
 .clkBtn {
+	text-align: center;
 	display: inline-block;
 	color: white;
 	background-color: black;
 	width: 50px;
-	height: 20px;
+
 }
 .clkBtn:hover {
 	background-color: red;
