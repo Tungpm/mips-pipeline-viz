@@ -66,6 +66,8 @@ table,th,td {
 
 
 
+
+
 .ControlBox {
 	float: right;
 	background-color: #bababa;
@@ -73,6 +75,12 @@ table,th,td {
 	text-align: center;
 	padding: 5px 5px 5px 5px;
 	margin: 10px 10px 10px 10px;
+}
+.errorBox {
+	display: inline-block;
+	color: red;
+	background-color: black;
+
 }
 .clk {
 	display: inline-block;

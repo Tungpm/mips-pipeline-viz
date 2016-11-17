@@ -24,7 +24,7 @@
 		<div class="instructInputContainer">
 			<div>Format: Instruction i j k</div>
 			<textarea class="instructs" style="width:100%;height:100%"></textarea>
-			<div class="createBtn" onclick="InitInstrStatusTable()">Create Instruction Status Table</div>
+			<div class="createBtn" onclick="createRegResultStatus()">Create Instruction Status Table</div>
 		</div>
 
 
@@ -33,7 +33,9 @@
 	</div><!--
 	--><div class="rightPane">
 
+		
 		<div class="ControlBox">
+			<div class="errorBox">This is an error Message!</div>
 			<div id="clock" class="clk">Clock: 0</div>
 			<div class="clkBtn" onclick="clockBack()"> < </div>
 			<div class="clkBtn" onclick="clockForward()"> > </div>
@@ -179,7 +181,7 @@
 			/* Parse the instructions */
 			var instructs = inputText.split("\n");
 			for (var l=0; l < instructs.length; l++) {
-				instructs[l] = instructs[l].split(" ");
+				instructs[l] = getInstructionPieces(instructs[l]);
 			}
 			/* Create html for instruction status table */
 			var InstructStatusHTML = "<table class='InstructStatusTable'>";
