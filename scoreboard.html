@@ -9,6 +9,9 @@
 	<link rel="stylesheet" type="text/css" href="css/scoreboard.css">
 
 	<script language="javascript" type="text/javascript" src="scoreboard.js"></script>
+	<script language="javascript" type="text/javascript" src="mips_translator/instructioninfo.js"></script>
+	<script language="javascript" type="text/javascript" src="mips_translator/hextomips.js"></script>
+	<script language="javascript" type="text/javascript" src="mips_translator/helper.js"></script>
 </head>
 <body>
 	<div class="heading">
@@ -21,7 +24,7 @@
 		<div class="instructInputContainer">
 			<div>Format: Instruction i j k</div>
 			<textarea class="instructs" style="width:100%;height:100%"></textarea>
-			<div class="createBtn" onclick="createRegResultStatus()">Create Register Result Status</div>
+			<div class="createBtn" onclick="InitInstrStatusTable()">Create Instruction Status Table</div>
 		</div>
 
 
@@ -31,7 +34,7 @@
 	--><div class="rightPane">
 
 		<div class="ControlBox">
-			<div class="clk">Clock: 0</div>
+			<div id="clock" class="clk">Clock: 0</div>
 			<div class="clkBtn" onclick="clockBack()"> < </div>
 			<div class="clkBtn" onclick="clockForward()"> > </div>
 		</div>
@@ -75,7 +78,7 @@
 			  </tr>
 			</table>
 
-			<div class="createBtn" onclick="InitializeFUTable()">Create FU Status</div>
+			<div class="createBtn" onclick="InitFUTable()">Create FU Status</div>
 		</div>
 
 		<div class="FUStatusContainer"></div>

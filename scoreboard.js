@@ -40,7 +40,7 @@ var Instruction = function (instr) {
 var ScoreBoard = function() {
     this.instructions = [];
     this.functionalUnits = [];
-    this.CLK = 0;
+    this.clk = 0;
 }
 
 //Initialize the functional units
@@ -127,6 +127,8 @@ ScoreBoard.prototype.displayFU = function() {
     FUStatusHTML += "</table>";
     /* Add HTML */
     $(".FUStatusContainer").html(FUStatusHTML);
+
+    $("#clock").html("Clock: "+s.clk);
 }
 ScoreBoard.prototype.next = function() {
     // Update
@@ -137,10 +139,24 @@ ScoreBoard.prototype.next = function() {
     this.displayFU();
 }
 
-var s = new ScoreBoard();
 
-function InitializeFUTable() {
+function InitFUTable() {
+    s = new ScoreBoard();
     s.initialize();
     s.displayFU();
 }
 
+function InitInstrStatusTable() {
+
+}
+function clockForward() {
+    s.next();
+}
+
+function clockBack() {
+
+}
+
+
+var s = new ScoreBoard();
+s.displayFU();
