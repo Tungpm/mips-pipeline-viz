@@ -14,18 +14,6 @@ table,th,td {
 	border: 1px solid black;
     border-collapse: collapse;
 }
-.createBtn {
-	width: 250px;
-	height: 40px;
-	line-height: 40px;
-	text-align: center;
-	background-color: black;
-	color: white;
-}
-.createBtn:hover {
-	background-color: red;
-	cursor: pointer;
-}
 
 
 
@@ -42,41 +30,17 @@ table,th,td {
 
 
 
-.leftPane {
-	width: 50%;
-	height: 100%;
-	display: inline-block;
-	background-color: #f4f4f4;
-	vertical-align: top;
-}
-.instructInputContainer {
-	margin: 5px 50px 5px 50px;
-	height: 100px;
-}
-.InstructStatusContainer {
-	margin: 25px 50px 5px 50px;
-}
-.InstructStatusTable{
-	margin: 0;
-	width: 100%;
-	text-align: center;
-}
-
-
-
-
 
 
 .bigBox {
+	background-color: #aaaaaa;
 	padding: 5px 5px 5px 5px;
-	margin: 10px 10px 10px 10px;
-	height: 30px;
+	margin: 10px 10px 0px 10px;
 	line-height: 30px;
 }
-
 .errorBox {
 	width: 70%;
-	height: 100%;
+	height: 30px;
 	color: #d80000;
 	background-color: #efefef;
 	font-weight: bold;
@@ -84,13 +48,12 @@ table,th,td {
 	overflow: scroll;
 	overflow-x: hidden;
 }
-
 .ControlBox {
 	width: 30%;
 	min-width: 200px;
-	height: 100%;
+	height: 30px;
 	float: right;
-	background-color: #bababa;
+	background-color: #c2c2c2;
 	display: inline-block;
 	text-align: right;
 }
@@ -111,6 +74,54 @@ table,th,td {
 	background-color: red;
 	cursor: pointer;
 }
+.createBtn {
+
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	background-color: black;
+	color: white;
+}
+.createBtn:hover {
+	background-color: red;
+	cursor: pointer;
+}
+
+
+
+
+
+
+
+
+.leftPane {
+	width: 50%;
+	height: 100%;
+	display: inline-block;
+	background-color: #f4f4f4;
+	vertical-align: top;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+.instructInputContainer {
+	margin: 5px 50px 5px 50px;
+	height: 100px;
+}
+.InstructStatusContainer {
+	margin: 25px 50px 5px 50px;
+}
+.InstructStatusTable{
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+
+
+
+
+
+
+
 
 
 
@@ -120,6 +131,8 @@ table,th,td {
 	display: inline-block;
 	background-color: #e2e2e2;
 	vertical-align: top;
+	overflow: scroll;
+	overflow-x: hidden;
 }
 .tableContainer {
 	margin: 5px 50px 5px 50px;
