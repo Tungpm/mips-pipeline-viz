@@ -4,17 +4,18 @@ var FunctionalUnit = function (name, type, latency) {
     this.type = type;
     this.name = name;
     this.latency = latency;
+    this.instr = null;
 
-    this.isBusy = false;
-    this.op = 0;
-    this.f_i = "";
-    this.f_j = "";
-    this.f_k = "";
+    this.isBusy = (this.instr == null)?false:true;
+    this.op = (this.instr == null)?"":this.instr.type;
+    this.f_i = (this.instr == null)?"":this.instr.f_i;
+    this.f_j = (this.instr == null)?"":this.instr.f_j;
+    this.f_k = (this.instr == null)?"":this.instr.f_k;
 
     this.q_j = null;
     this.q_k = null;
-    this.r_j = true;
-    this.r_k = true;
+    this.r_j = ((this.f_j == "")?"":((this.q_j == null)?true:false));
+    this.r_k = ((this.f_k == "")?"":((this.q_k == null)?true:false));
 }
 
 // INSTRUCTION
@@ -108,8 +109,17 @@ ScoreBoard.prototype.displayFU = function() {
 
     // loop each functional unit to generate
     for (var i=0; i < this.functionalUnits.length; i++) {
+        var unit = this.functionalUnits[i];
         FUStatusHTML += "<tr>";
-        FUStatusHTML += "<td></td><td>"+this.functionalUnits[i].name+"</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+        if (unit.isBusy) {
+            FUStatusHTML += "<td></td><td>" + unit.name + "</td><td>" + unit.isBusy + "</td><td>" + unit.op +
+                "</td><td>" + unit.f_i + "</td><td>" + unit.f_j + "</td><td>" + unit.f_k +
+                "</td><td>" + ((unit.q_j == null) ? "" : unit.q_j.name) + "</td><td>" + ((unit.q_k == null) ? "" : unit.q_k.name) +
+                "</td><td>" + unit.r_j + "</td><td>" + unit.r_k + "</td>";
+        } else {
+            FUStatusHTML += "<td></td><td>"+ unit.name + "</td><td>" + unit.isBusy +
+                "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+        }
         FUStatusHTML += "</tr>";
     }
     FUStatusHTML += "</table>";
@@ -118,6 +128,11 @@ ScoreBoard.prototype.displayFU = function() {
 }
 ScoreBoard.prototype.next = function() {
     // Update
+    this.clk = this.clk + 1;
+
+
+    // Display updated things
+    this.displayFU();
 }
 
 var s = new ScoreBoard();
