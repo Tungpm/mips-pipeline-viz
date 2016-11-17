@@ -55,6 +55,16 @@
 			    <td><input id="latDiv" type="text" style="width:90%"></td>
 			    <td><input id="cDiv" type="text" style="width:90%"></td>
 			  </tr>
+			  <tr>
+			    <th>Load</th>
+			    <td><input id="latLoad" type="text" style="width:90%"></td>
+			    <td><input id="cLoad" type="text" style="width:90%"></td>
+			  </tr>
+			  <tr>
+			    <th>Store</th>
+			    <td><input id="latStore" type="text" style="width:90%"></td>
+			    <td><input id="cStore" type="text" style="width:90%"></td>
+			  </tr>
 			</table>
 
 			<div class="createBtn" onclick="createFUStatus()">Create FU Status</div>
@@ -121,8 +131,10 @@
 			var numAdd = parseInt($("#cAdd").val());
 			var numMult = parseInt($("#cMult").val());
 			var numDiv = parseInt($("#cDiv").val());
-			var numFUList = [numInt, numAdd, numMult, numDiv];
-			var FUNames = ["Integer","FP Add", "Mult", "Div"];
+			var numLoad = parseInt($("#cLoad").val());
+			var numStore = parseInt($("#cStore").val());
+			var numFUList = [numInt, numAdd, numMult, numDiv, numLoad, numStore];
+			var FUNames = ["Integer","FP Add", "Mult", "Div", "Load", "Store"];
 			/* Construct HTML for FU status table */
 			var FUStatusHTML = "<table class='FUStatusTable'>";
 			FUStatusHTML += "<tr>";
@@ -139,7 +151,7 @@
 				FUStatusHTML += "<th>Rk</th>";
 		  	FUStatusHTML += "</tr>";
 			// loop of each of the 4 types of FU units
-			for (var i=0; i < 4; i++) {
+			for (var i=0; i < numFUList.length; i++) {
 				// create j FU units of a type
 				for (var j=0; j < numFUList[i]; j++) {
 					FUStatusHTML += "<tr>";
