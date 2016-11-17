@@ -7,16 +7,16 @@ var FunctionalUnit = function (name, type, latency) {
     this.instr = null;
 
     this.time = 0;
-    this.isBusy = (this.instr == null)?false:true;
-    this.op = (this.instr == null)?"":this.instr.type;
-    this.f_i = (this.instr == null)?"":this.instr.f_i;
-    this.f_j = (this.instr == null)?"":this.instr.f_j;
-    this.f_k = (this.instr == null)?"":this.instr.f_k;
+    this.isBusy = function(){return((this.instr == null)?false:true);};
+    this.op = function(){return((this.instr == null)?"":this.instr.type);};
+    this.f_i = function(){return((this.instr == null)?"":this.instr.f_i);};
+    this.f_j = function(){return((this.instr == null)?"":this.instr.f_j);};
+    this.f_k = function(){return((this.instr == null)?"":this.instr.f_k);};
 
     this.q_j = null;
     this.q_k = null;
-    this.r_j = ((this.f_j == "")?"":((this.q_j == null)?true:false));
-    this.r_k = ((this.f_k == "")?"":((this.q_k == null)?true:false));
+    this.r_j = function(){return(((this.f_j == "")?"":((this.q_j == null)?true:false)));};
+    this.r_k = function(){return(((this.f_k == "")?"":((this.q_k == null)?true:false)));};
 }
 
 // INSTRUCTION
@@ -41,13 +41,14 @@ var Instruction = function (instr) {
 var ScoreBoard = function() {
     this.instructions = [];
     this.functionalUnits = [];
+    this.instructions_running = [];
+    this.instruction_toBeIssued = 0;
+    this.FUdict = {'INT':[], 'ADD':[], 'MULT':[], 'DIV':[], 'LOAD':[], 'STORE':[]};
     this.clk = 0;
 }
 
 //Initialize the functional units
 ScoreBoard.prototype.loadFU = function() {
-    this.functionalUnits = [];
-
 
     /* Get the number of FU units to make */
     var Integer_Count = parseInt($("#cInt").val());
@@ -66,28 +67,44 @@ ScoreBoard.prototype.loadFU = function() {
 
 
     for (count = 1; count <= Integer_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('INT'+count, 'INT', Integer_Latency));
+        var type = 'INT';
+        var unit = new FunctionalUnit(type+count, type, Integer_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
     for (count = 1; count <= Add_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('ADD'+count, 'ADD', Add_Latency));
+        var type = 'ADD';
+        var unit = new FunctionalUnit(type+count, type, Add_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
     for (count = 1; count <= Mult_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('MULT'+count, 'MULT', Mult_Latency));
+        var type = 'MULT';
+        var unit = new FunctionalUnit(type+count, type, Mult_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
     for (count = 1; count <= Div_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('DIV'+count, 'DIV', Div_Latency));
+        var type = 'DIV';
+        var unit = new FunctionalUnit(type+count, type, Div_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
     for (count = 1; count <= Load_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('LOAD'+count, 'LOAD', Load_Latency));
+        var type = 'LOAD';
+        var unit = new FunctionalUnit(type+count, type, Integer_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
     for (count = 1; count <= Store_Count; count++) {
-        this.functionalUnits.push(new FunctionalUnit('STORE'+count, 'STORE', Store_Latency));
+        var type = 'STORE';
+        var unit = new FunctionalUnit(type+count, type, Integer_Latency);
+        this.FUdict[type].push(unit);
+        this.functionalUnits.push(unit);
     }
 }
 
 ScoreBoard.prototype.loadInst = function() {
-    //TODO: Parse the instructions in
-    this.instructions = [];
     this.CLK = 0;
 
     /* Get the inputed instructions */
@@ -123,13 +140,13 @@ ScoreBoard.prototype.displayFU = function() {
     for (var i=0; i < this.functionalUnits.length; i++) {
         var unit = this.functionalUnits[i];
         FUStatusHTML += "<tr>";
-        if (unit.isBusy) {
-            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy +
-                "</td><td>" + unit.op + "</td><td>" + unit.f_i + "</td><td>" + unit.f_j + "</td><td>" + unit.f_k +
+        if (unit.isBusy()) {
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
+                "</td><td>" + unit.op() + "</td><td>" + unit.f_i() + "</td><td>" + unit.f_j() + "</td><td>" + unit.f_k() +
                 "</td><td>" + ((unit.q_j == null) ? "" : unit.q_j.name) + "</td><td>" + ((unit.q_k == null) ? "" : unit.q_k.name) +
-                "</td><td>" + unit.r_j + "</td><td>" + unit.r_k + "</td>";
+                "</td><td>" + unit.r_j() + "</td><td>" + unit.r_k() + "</td>";
         } else {
-            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy +
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
                 "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
         }
         FUStatusHTML += "</tr>";
@@ -175,15 +192,53 @@ ScoreBoard.prototype.displayInst = function() {
 }
 ScoreBoard.prototype.next = function() {
     // Update
+    // Clock
     this.clk = this.clk + 1;
+
+    var Inst = this.instructions;
+    var Inst_Run = this.instructions_running;
+    var FU = this.functionalUnits;
+
+    //Issue
+    var issueInst = Inst[this.instruction_toBeIssued];
+    var hasHazard = false;
+    //First instruction in line waiting to be issued
+    //Check instructions running for WAW hazard
+    for (var curr_inst in Inst_Run) {
+        if (curr_inst.f_i == issueInst.f_i) {
+            hasHazard = true;
+            break;
+        }
+
+    }
+
+    //Check functional units for structural hazards
+    if (!hasHazard) {
+        for (var fu in this.FUdict[issueInst.type]) {
+            if (!fu.isBusy) {
+                //If not busy then we can issue
+                fu.instr = issueInst;
+                Inst_Run.push(issueInt);
+                break;
+            }
+        }
+    }
+    //Read
+
+    //Execute
+
+    //Write
 
 
     // Display updated things
     this.displayFU();
+    this.displayInst();
 }
 
 function Initialize() {
     $(".errorBox").html("");
+    s = new ScoreBoard();
+
     //Functional Units
     s.loadFU();
     s.displayFU();
