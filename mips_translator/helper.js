@@ -358,23 +358,5 @@ function getInstructionPieces(typedInstruction) {
     typedInstruction = typedInstruction.replace(/\)/g, ' ');
     typedInstruction = typedInstruction.trim();
     typedInstruction = typedInstruction.replace(/\s{2,}/g, ' ');
-    var typedInstructionSymbol = typedInstruction.split(' ')[0].toUpperCase();
-
-    var instructionObject = searchInstruction(typedInstructionSymbol);
-
-    // parse typed instruction and actual instruction format from $ and 0x
-    var regexRegisters = /^(\$([0-9a-z])+|[a-z]([0-9a-z])*)$/g;
-    var regexNumbers = /^0x([0-9a-f])+$/g;
-
-    // remove comas, parenthesis and square brackets of the format string
-    var format = instructionObject.format;
-    format = format.replace(/\[[^\]]+\]/g, '');
-    format = format.replace(/,/g, ' ');
-    format = format.replace(/\(/g, ' ');
-    format = format.replace(/\)/g, ' ');
-
-    // get all the pieces of the format string and typed instruction (consider whitespaces as separators)
-    var formatPieces = format.replace(/\s+/g, ' ').trim().split(' ');
-    var instructionPieces = typedInstruction.replace(/\s+/g, ' ').trim().split(' ');
-    return instructionPieces
+    return typedInstruction.split(' ');
 }

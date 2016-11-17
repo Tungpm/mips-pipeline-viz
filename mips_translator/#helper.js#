@@ -1,0 +1,14 @@
+/**
+ * Fall 2014
+ * CSCI 320 - Computer Architecture
+ * Tiago Bozzetti, Ellie Easse and Chau Tieu
+ *
+ * Contains all the helper functions for mipstohex.js and hextomips.js
+ * including checking hex, opcode, clearing text, printing result,
+ * binary to hex and hex to binary conversion, formatting the instruction
+ * table and searching the instruction.
+ */
+
+
+/* checks if the hex entered has the correct number of bits */
+function checkHex(hex) {
