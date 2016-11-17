@@ -376,5 +376,5 @@ function getInstructionPieces(typedInstruction) {
     // get all the pieces of the format string and typed instruction (consider whitespaces as separators)
     var formatPieces = format.replace(/\s+/g, ' ').trim().split(' ');
     var instructionPieces = typedInstruction.replace(/\s+/g, ' ').trim().split(' ');
-    return [formatPieces, instructionPieces]
+    return instructionPieces
 }
