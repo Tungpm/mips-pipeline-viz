@@ -14,11 +14,11 @@ clkStr = "Clock: 0";
 clk = 0;
 
 // 5 Instructions
-instrF = "addiu $zero $zero $zero";
-instrD = "addiu $zero $zero $zero";
-instrE = "addiu $zero $zero $zero";
-instrM = "addiu $zero $zero $zero";
-instrW = "addiu $zero $zero $zero";
+instrF = "addiu $zero $zero $zero"; instrTypeF = "addiu";
+instrD = "addiu $zero $zero $zero"; instrTypeD = "addiu";
+instrE = "addiu $zero $zero $zero"; instrTypeE = "addiu";
+instrM = "addiu $zero $zero $zero"; instrTypeM = "addiu";
+instrW = "addiu $zero $zero $zero"; instrTypeW = "addiu";
 
 RegWriteD = "0";
 MemtoRegD = "0";
@@ -116,19 +116,19 @@ function draw() {
 	rect(760* RATIO, 80* RATIO, 20* RATIO, PIPELINE_HEIGHT * RATIO); // MW pipeline register
 
 	// All boxes
-	fill(getColor(instrF));
+	fill(getColor(instrTypeF));
   rect(80* RATIO, MODULE_Y* RATIO, 120* RATIO, 100* RATIO); // Fetch
 
-	fill(getColor(instrD));
+	fill(getColor(instrTypeD));
   rect(260* RATIO, MODULE_Y* RATIO, 120* RATIO, 100* RATIO); // Decode
 
-	fill(getColor(instrE));
+	fill(getColor(instrTypeE));
   rect(440* RATIO, MODULE_Y* RATIO, 120* RATIO, 100* RATIO); // Execute
 
-	fill(getColor(instrM));
+	fill(getColor(instrTypeM));
   rect(620* RATIO, MODULE_Y* RATIO, 120* RATIO, 100* RATIO); // Memory
 
-	fill(getColor(instrW));
+	fill(getColor(instrTypeW));
   rect(800* RATIO, MODULE_Y* RATIO, 120* RATIO, 100* RATIO); // Write
 
 
@@ -247,11 +247,13 @@ function mousePressed() {
 
 	// Grab the new information from the new clock cycle
 	var new_info = getInfo(clk);
-	instrF = new_info[1];
-	instrD = new_info[2];
-	instrE = new_info[3];
-	instrM = new_info[4];
-	instrW = new_info[5];
+	var new_instr_info = getInstrTypeInfo(clk);
+	console.log(new_info); console.log(new_instr_info);
+	instrF = new_info[1]; instrTypeF = new_instr_info[1];
+	instrD = new_info[2]; instrTypeD = new_instr_info[2];
+	instrE = new_info[3]; instrTypeE = new_instr_info[3];
+	instrM = new_info[4]; instrTypeM = new_instr_info[4];
+	instrW = new_info[5]; instrTypeW = new_instr_info[5];
 
 	RegWriteD = new_info[6];
 	MemtoRegD = new_info[7];
@@ -290,7 +292,6 @@ function submitInfo() {
 }
 
 function onResize() {
-
 	// Resize the HTML
 	//canvasElement = document.getElementById("sketch-holder");
 	//canvasElement.
