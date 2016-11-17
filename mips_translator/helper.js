@@ -300,6 +300,7 @@ function convertHexToMips(hex) {
     }
     // remove comas, parenthesis and square brackets of the format string
     var format = insObj.format;
+
     format = format.replace(/\[[^\]]+\]/g, '');
     format = format.replace(/,/g, ' ');
     format = format.replace(/\(/g, ' ');
@@ -307,6 +308,7 @@ function convertHexToMips(hex) {
 
     // get all the pieces of the format string and typed instruction (consider whitespaces as separators)
     var formatPieces = format.replace(/\s+/g,' ').trim().split(' ');
+
 
     // get the registers and immediates values and put them in an array
     for(i = 1; i < formatPieces.length; i++){
@@ -339,4 +341,40 @@ function convertHexToMips(hex) {
         }
     }
     return formatPieces.join(' ')
+}
+
+/**
+ * Get Instruction Pieces
+ * @param instructionObject
+ * @param typedInstruction
+ */
+function getInstructionPieces(typedInstruction) {
+
+    typedInstruction = typedInstruction.toLowerCase();
+
+    // remove comas, parenthesis and extra spaces of the typed instruction
+    typedInstruction = typedInstruction.replace(/,/g, ' ');
+    typedInstruction = typedInstruction.replace(/\(/g, ' ');
+    typedInstruction = typedInstruction.replace(/\)/g, ' ');
+    typedInstruction = typedInstruction.trim();
+    typedInstruction = typedInstruction.replace(/\s{2,}/g, ' ');
+    var typedInstructionSymbol = typedInstruction.split(' ')[0].toUpperCase();
+
+    var instructionObject = searchInstruction(typedInstructionSymbol);
+
+    // parse typed instruction and actual instruction format from $ and 0x
+    var regexRegisters = /^(\$([0-9a-z])+|[a-z]([0-9a-z])*)$/g;
+    var regexNumbers = /^0x([0-9a-f])+$/g;
+
+    // remove comas, parenthesis and square brackets of the format string
+    var format = instructionObject.format;
+    format = format.replace(/\[[^\]]+\]/g, '');
+    format = format.replace(/,/g, ' ');
+    format = format.replace(/\(/g, ' ');
+    format = format.replace(/\)/g, ' ');
+
+    // get all the pieces of the format string and typed instruction (consider whitespaces as separators)
+    var formatPieces = format.replace(/\s+/g, ' ').trim().split(' ');
+    var instructionPieces = typedInstruction.replace(/\s+/g, ' ').trim().split(' ');
+    return [formatPieces, instructionPieces]
 }

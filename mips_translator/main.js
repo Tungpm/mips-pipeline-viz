@@ -64,8 +64,8 @@ function convertTextToHex(data) {
     return res;
 }
 
-dummy_data = "addi t1 t1 0x0"
-console.log(convertTextToHex(dummy_data))
+dummy_data = "addi t1 t1 0x0";
+console.log(getInstructionPieces(dummy_data));
 
 function submitHex() {
     input_element = document.getElementById("hex_text").value;
