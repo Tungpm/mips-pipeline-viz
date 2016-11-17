@@ -66,6 +66,33 @@ table,th,td {
 
 
 
+.ControlBox {
+	float: right;
+	background-color: #bababa;
+	display: inline-block;
+	text-align: center;
+	padding: 5px 5px 5px 5px;
+	margin: 10px 10px 10px 10px;
+}
+.clk {
+	display: inline-block;
+	width: 100px;
+	height: 20px;
+}
+.clkBtn {
+	display: inline-block;
+	color: white;
+	background-color: black;
+	width: 50px;
+	height: 20px;
+}
+.clkBtn:hover {
+	background-color: red;
+	cursor: pointer;
+}
+
+
+
 .rightPane {
 	width: 50%;
 	height: 100%;

@@ -22,10 +22,12 @@ var FunctionalUnit = function (name, type, latency) {
 var Instruction = function (instr) {
     // Parsing the components of the instruction
     //TODO: Change to actual parsing
-    this.type = "ADDUI";
-    this.f_i = "F3";
-    this.f_j = "F1";
-    this.f_k = "F2";
+    var pieces_arr = getInstructionPieces(instr);
+
+    this.type = pieces_arr[0];
+    this.f_i = pieces_arr[1];
+    this.f_j = pieces_arr[2];
+    this.f_k = pieces_arr[3];
 
     this.functionalUnit = null;
     this.issueTime = 0;

@@ -23,7 +23,7 @@ instrW = "addiu $zero $zero $zero";
 RegWriteD = "0";
 MemtoRegD = "0";
 MemWriteD = "0";
-ALUControlD = "0";
+ALUControlD = "0000";
 ALUSrcD = "0";
 RegDstD = "0";
 BranchD = "0";
@@ -31,7 +31,7 @@ BranchD = "0";
 RegWriteE = "0";
 MemtoRegE = "0";
 MemWriteE = "0";
-ALUControlE = "0";
+ALUControlE = "0000";
 ALUSrcE = "0";
 RegDstE = "0";
 
@@ -41,6 +41,8 @@ MemWriteM = "0";
 
 RegWriteW = "0";
 MemtoRegW = "0";
+
+infoLength = 0;
 
 // Color dictionary
 colorDict = {};
@@ -98,8 +100,9 @@ function draw() {
 	background(255);
 
 	// Forward and Backward Buttons
-  rect(840 * RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Backward
-  rect(885* RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Forward
+	fill(70, 101, 192, 127);
+  //rect(840 * RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Backward
+  //rect(885* RATIO, 350* RATIO, 40* RATIO, 20* RATIO); // Forward
   textSize(20* RATIO);
   fill(70, 101, 192, 127);
   text("<", 855* RATIO, 365* RATIO); // Fetch
@@ -134,35 +137,11 @@ function draw() {
 	rect(260* RATIO, CONTROL_Y* RATIO, 60* RATIO, 100* RATIO); // Decode
 	text("Control\nUnit", 260* RATIO, CONTROL_Y * RATIO);
 
-	// Control wires D
-	textSize(WIRE_NAME * RATIO);
-	fill(RegWriteD == "1" ? RED : BLUE); text("RegWriteD", (320 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
-	fill(MemtoRegD == "1" ? RED : BLUE); text("MemToRegD", (320 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
-	fill(MemWriteD == "1" ? RED : BLUE);text("MemWriteD", (320 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
-	fill(ALUControlD == "1" ? RED : BLUE);text("ALUControlD", (320 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO);
-	fill(ALUSrcD == "1" ? RED : BLUE); text("ALUSrcD", (320 + WIRE_NAME_OFF) * RATIO, (151 - WIRE_NAME_OFF) * RATIO);
-	fill(RegDstD == "1" ? RED : BLUE); text("RegDstD", (320 + WIRE_NAME_OFF) * RATIO, (163 - WIRE_NAME_OFF) * RATIO);
-	fill(BranchD == "1" ? RED : BLUE); text("BranchD", (320 + WIRE_NAME_OFF) * RATIO, (175 - WIRE_NAME_OFF) * RATIO);
-
-	fill(RegWriteE == "1" ? RED : BLUE); text("RegWriteE", (420 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
-	fill(MemtoRegE == "1" ? RED : BLUE); text("MemToRegE", (420 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
-	fill(MemWriteE == "1" ? RED : BLUE); text("MemWriteE", (420 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
-	fill(ALUControlE == "1" ? RED : BLUE); text("ALUControlE", (420 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO);
-	fill(ALUSrcE == "1" ? RED : BLUE); text("ALUSrcE", (420 + WIRE_NAME_OFF) * RATIO, (151 - WIRE_NAME_OFF) * RATIO);
-	fill(RegDstE == "1" ? RED : BLUE); text("RegDstE", (420 + WIRE_NAME_OFF) * RATIO, (163 - WIRE_NAME_OFF) * RATIO);
-
-	fill(RegWriteM == "1" ? RED : BLUE); text("RegWriteM", (600 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
-	fill(MemtoRegM == "1" ? RED : BLUE); text("MemToRegM", (600 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
-	fill(MemWriteM == "1" ? RED : BLUE); text("MemWriteM", (600 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
-
-	fill(RegWriteW == "1" ? RED : BLUE); text("RegWriteW", (780 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
-	fill(MemtoRegW == "1" ? RED : BLUE); text("MemToRegW", (780 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
-
 	strokeWeight(1 * RATIO);
 	stroke(RegWriteD == "1" ? RED : BLUE); line(320 * RATIO, 103 * RATIO, 400 * RATIO, 103 * RATIO);
 	stroke(MemtoRegD == "1" ? RED : BLUE); line(320 * RATIO, 115 * RATIO, 400 * RATIO, 115 * RATIO);
 	stroke(MemWriteD == "1" ? RED : BLUE); line(320 * RATIO, 127 * RATIO, 400 * RATIO, 127 * RATIO);
-	stroke(ALUControlD == "1" ? RED : BLUE); line(320 * RATIO, 139 * RATIO, 400 * RATIO, 139 * RATIO);
+	stroke(check_zero(ALUControlD) ? BLUE : RED); line(320 * RATIO, 139 * RATIO, 400 * RATIO, 139 * RATIO);
 	stroke(ALUSrcD == "1" ? RED : BLUE); line(320 * RATIO, 151 * RATIO, 400 * RATIO, 151 * RATIO);
 	stroke(RegDstD == "1" ? RED : BLUE); line(320 * RATIO, 163 * RATIO, 400 * RATIO, 163 * RATIO);
 	stroke(BranchD == "1" ? RED : BLUE); line(320 * RATIO, 175 * RATIO, 375 * RATIO, 175 * RATIO);
@@ -171,7 +150,7 @@ function draw() {
 	stroke(RegWriteE == "1" ? RED : BLUE); line(420 * RATIO, 103 * RATIO, 580 * RATIO, 103 * RATIO);
 	stroke(MemtoRegE == "1" ? RED : BLUE); line(420 * RATIO, 115 * RATIO, 580 * RATIO, 115 * RATIO);
 	stroke(MemWriteE == "1" ? RED : BLUE); line(420 * RATIO, 127 * RATIO, 580 * RATIO, 127 * RATIO);
-	stroke(ALUControlE == "1" ? RED : BLUE); line(420 * RATIO, 139 * RATIO, 475 * RATIO, 139 * RATIO);
+	stroke(check_zero(ALUControlE) ? BLUE : RED); line(420 * RATIO, 139 * RATIO, 475 * RATIO, 139 * RATIO);
 	stroke(ALUSrcE == "1" ? RED : BLUE); line(420 * RATIO, 151 * RATIO, 475 * RATIO, 151 * RATIO);
 	stroke(RegDstE == "1" ? RED : BLUE); line(420 * RATIO, 163 * RATIO, 475 * RATIO, 163 * RATIO);
 
@@ -183,6 +162,39 @@ function draw() {
 	// Control wires W
 	stroke(RegWriteW == "1" ? RED : BLUE); line(780 * RATIO, 103 * RATIO, 835 * RATIO, 103 * RATIO);
 	stroke(MemtoRegW == "1" ? RED : BLUE); line(780 * RATIO, 115 * RATIO, 835 * RATIO, 115 * RATIO);
+
+	// Control wires D
+	strokeWeight(0);
+	textSize(WIRE_NAME * RATIO);
+	fill(RegWriteD == "1" ? RED : BLUE); text("RegWriteD", (320 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
+	fill(MemtoRegD == "1" ? RED : BLUE); text("MemToRegD", (320 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
+	fill(MemWriteD == "1" ? RED : BLUE); text("MemWriteD", (320 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
+
+	fill(check_zero(ALUControlD) ? BLUE : RED);
+	text("ALUControlD", (320 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO);
+	//text(ALUControlD, (365 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO);
+
+	fill(ALUSrcD == "1" ? RED : BLUE); text("ALUSrcD", (320 + WIRE_NAME_OFF) * RATIO, (151 - WIRE_NAME_OFF) * RATIO);
+	fill(RegDstD == "1" ? RED : BLUE); text("RegDstD", (320 + WIRE_NAME_OFF) * RATIO, (163 - WIRE_NAME_OFF) * RATIO);
+	fill(BranchD == "1" ? RED : BLUE); text("BranchD", (320 + WIRE_NAME_OFF) * RATIO, (175 - WIRE_NAME_OFF) * RATIO);
+
+	fill(RegWriteE == "1" ? RED : BLUE); text("RegWriteE", (420 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
+	fill(MemtoRegE == "1" ? RED : BLUE); text("MemToRegE", (420 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
+	fill(MemWriteE == "1" ? RED : BLUE); text("MemWriteE", (420 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
+
+	fill(check_zero(ALUControlE) ? BLUE : RED);
+	text("ALUControlE", (420 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO);
+	//text(ALUControlE, (465 + WIRE_NAME_OFF) * RATIO, (139 - WIRE_NAME_OFF) * RATIO)
+
+	fill(ALUSrcE == "1" ? RED : BLUE); text("ALUSrcE", (420 + WIRE_NAME_OFF) * RATIO, (151 - WIRE_NAME_OFF) * RATIO);
+	fill(RegDstE == "1" ? RED : BLUE); text("RegDstE", (420 + WIRE_NAME_OFF) * RATIO, (163 - WIRE_NAME_OFF) * RATIO);
+
+	fill(RegWriteM == "1" ? RED : BLUE); text("RegWriteM", (600 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
+	fill(MemtoRegM == "1" ? RED : BLUE); text("MemToRegM", (600 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
+	fill(MemWriteM == "1" ? RED : BLUE); text("MemWriteM", (600 + WIRE_NAME_OFF) * RATIO, (127 - WIRE_NAME_OFF) * RATIO);
+
+	fill(RegWriteW == "1" ? RED : BLUE); text("RegWriteW", (780 + WIRE_NAME_OFF) * RATIO, (103 - WIRE_NAME_OFF) * RATIO);
+	fill(MemtoRegW == "1" ? RED : BLUE); text("MemToRegW", (780 + WIRE_NAME_OFF) * RATIO, (115 - WIRE_NAME_OFF) * RATIO);
 
 	// Title
 	strokeWeight(0);
@@ -208,7 +220,7 @@ function draw() {
 	text(instrW, 805* RATIO, TEXT_Y* RATIO); // Write
 
 	textSize(20 * RATIO);
-	fill(999, 999, 999);
+	fill(0, 0, 0);
 	text(clkStr, 30* RATIO,30* RATIO); // Write
 	}
 
@@ -221,12 +233,13 @@ function mousePressed() {
   prevY = 350 * RATIO;
   nextX = 885 * RATIO;
   nextY = 350 * RATIO;
+	console.log(infoLength);
 
-  if (inRange(prevX,prevY,btnWidth,btnHeight)) { // prev clicked
+  if (inRange(prevX,prevY,btnWidth,btnHeight) && (clk > 0)) { // prev clicked
   	// Updating the clock
   	clk = clk - 1;
   	clkStr = "Clock: "+clk;
-  } else if (inRange(nextX,nextY,btnWidth,btnHeight)) {
+  } else if (inRange(nextX,nextY,btnWidth,btnHeight) && (clk < infoLength)) {
   	// Updating the clock
   	clk = clk + 1;
   	clkStr = "Clock: "+clk;

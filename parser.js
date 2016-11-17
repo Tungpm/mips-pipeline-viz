@@ -13,7 +13,6 @@ function parseInfo(data) {
   var lines = data.split(/\n/);
   var len = lines.length;
   infoArray = new Array(len);
-  console.log(infoArray);
 
   // Loop through all the line
   for (var lineNum = 0; lineNum < len; lineNum++) {
@@ -31,10 +30,8 @@ function parseInfo(data) {
     }
 
     infoArray[lineNum] = line_data;
-    console.log(infoArray);
   }
-
-  // Print the array to learn what is going on
+  infoLength = len;
 }
 
 function getInfo(clock_cycle) {
