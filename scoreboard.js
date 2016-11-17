@@ -1,6 +1,6 @@
 
 // FUNCTIONAL UNIT
-function FunctionalUnit(name, type, latency) {
+var FunctionalUnit = function (name, type, latency) {
     this.type = type;
     this.name = name;
     this.latency = latency;
@@ -18,7 +18,7 @@ function FunctionalUnit(name, type, latency) {
 }
 
 // INSTRUCTION
-function Instruction(instr) {
+var Instruction = function (instr) {
     // Parsing the components of the instruction
     //TODO: Change to actual parsing
     this.type = "ADDUI";
@@ -34,21 +34,32 @@ function Instruction(instr) {
 }
 
 // SCOREBOARD
-function ScoreBoard() {
+var ScoreBoard = function() {
     this.instructions = [];
     this.functionalUnits = [];
     this.CLK = 0;
 }
 
 //Initialize the functional units
-ScoreBoard.prototype.initialize = function(
-    Integer_Count, Integer_Latency,
-    Add_Count, Add_Latency,
-    Mult_Count, Mult_Latency,
-    Div_Count, Div_Latency,
-    Load_Count, Load_Latency,
-    Store_Count, Store_Latency) {
+ScoreBoard.prototype.initialize = function() {
     this.functionalUnits = [];
+
+
+    /* Get the number of FU units to make */
+    var Integer_Count = parseInt($("#cInt").val());
+    var Add_Count = parseInt($("#cAdd").val());
+    var Mult_Count = parseInt($("#cMult").val());
+    var Div_Count = parseInt($("#cDiv").val());
+    var Load_Count = parseInt($("#cLoad").val());
+    var Store_Count = parseInt($("#cStore").val());
+
+    var Integer_Latency = parseInt($("#latInt").val());
+    var Add_Latency = parseInt($("#latAdd").val());
+    var Mult_Latency = parseInt($("#latMult").val());
+    var Div_Latency = parseInt($("#latDiv").val());
+    var Load_Latency = parseInt($("#latLoad").val());
+    var Store_Latency = parseInt($("#latStore").val());
+
 
     for (count = 1; count <= Integer_Count; count++) {
         this.functionalUnits.push(new FunctionalUnit('INT'+count, 'INT', Integer_Latency));
@@ -74,12 +85,45 @@ ScoreBoard.prototype.loadInstructions = function() {
     //TODO: Parse the instructions in
     this.instructions = [];
     this.CLK = 0;
+
+
 }
 
+ScoreBoard.prototype.displayFU = function() {
+    /* Construct HTML for FU status table */
+    var FUStatusHTML = "<table class='FUStatusTable'>";
+    FUStatusHTML += "<tr>";
+    FUStatusHTML += "<th>Time</th>";
+    FUStatusHTML += "<th>Name</th>";
+    FUStatusHTML += "<th>Busy</th>";
+    FUStatusHTML += "<th>Op</th>";
+    FUStatusHTML += "<th>Fi</th>";
+    FUStatusHTML += "<th>Fj</th>";
+    FUStatusHTML += "<th>Fk</th>";
+    FUStatusHTML += "<th>Qj</th>";
+    FUStatusHTML += "<th>Qk</th>";
+    FUStatusHTML += "<th>Rj</th>";
+    FUStatusHTML += "<th>Rk</th>";
+    FUStatusHTML += "</tr>";
 
+    // loop each functional unit to generate
+    for (var i=0; i < this.functionalUnits.length; i++) {
+        FUStatusHTML += "<tr>";
+        FUStatusHTML += "<td></td><td>"+this.functionalUnits[i].name+"</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+        FUStatusHTML += "</tr>";
+    }
+    FUStatusHTML += "</table>";
+    /* Add HTML */
+    $(".FUStatusContainer").html(FUStatusHTML);
+}
 ScoreBoard.prototype.next = function() {
     // Update
 }
 
-s = ScoreBoard();
-s.next();
+var s = new ScoreBoard();
+
+function InitializeFUTable() {
+    s.initialize();
+    s.displayFU();
+}
+
