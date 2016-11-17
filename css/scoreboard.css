@@ -80,6 +80,7 @@ table,th,td {
 	background-color: #efefef;
 	font-weight: bold;
 	display: inline-block;
+	overflow: scroll;
 }
 
 .ControlBox {
