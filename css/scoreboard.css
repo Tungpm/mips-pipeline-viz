@@ -1,0 +1,102 @@
+html {
+	background-color: #FFFFFF;
+	width:100%;
+	height:100%;
+}
+body { 
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+table,th,td {
+	border: 1px solid black;
+    border-collapse: collapse;
+}
+.createBtn {
+	width: 200px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	background-color: black;
+	color: white;
+}
+.createBtn:hover {
+	background-color: red;
+	cursor: pointer;
+}
+
+
+
+
+.heading {
+	width: 100%;
+	text-align: center;
+	font-family: "verdana";
+	font-size: 50px;
+	height: 100px;
+	line-height: 100px;
+}
+
+
+
+
+.leftPane {
+	width: 50%;
+	height: 100%;
+	display: inline-block;
+	background-color: #f4f4f4;
+	vertical-align: top;
+}
+.instructInputContainer {
+	margin: 5px 50px 5px 50px;
+	height: 100px;
+}
+.InstructStatusContainer {
+	margin: 25px 50px 5px 50px;
+}
+.InstructStatusTable{
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+
+
+
+
+
+
+.rightPane {
+	width: 50%;
+	height: 100%;
+	display: inline-block;
+	background-color: #e2e2e2;
+	vertical-align: top;
+}
+.tableContainer {
+	margin: 5px 50px 5px 50px;
+}
+.hardwareTable {
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+.FUStatusContainer {
+	margin: 5px 50px 5px 50px;
+}
+.FUStatusTable {
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+.RegResultStatusContainer {
+	margin: 5px 50px 5px 50px;
+}
+.RegResultStatusTable {
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+
+
+
