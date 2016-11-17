@@ -26,6 +26,8 @@
       			<li><a class="menuItem" onclick="displayLink('MIPS Translator')" href="https://tungpm.github.io/mips_translator/extra_credit/index.html" target="webFrameName">MIPS Translator</a></li>
 
       			<li><a onclick="displayLink('Pipeline Visualizer')" href="pipeline.html" target="webFrameName">Pipeline Visualizer</a></li>
+
+      			<li><a onclick="displayLink('Scoreboard Visualizer')" href="scoreboard.html" target="webFrameName">Scoreboard Visualizer</a></li>
     		</ul>
   			</div>
 
@@ -46,13 +48,11 @@
 				document.getElementById("webFrame").src = 'home/index.html';
 				h = $("#navBar").height();
 				$("#webFrame").height($(window).height()-h);
-				
 			}
 
-			function displayLink(sDisplay) {
-				document.getElementById("sideBarDisplay").innerHTML = sDisplay;
+			function displayLink(a) {
+				var b = 5;
 			}
-
 		</script>
 	</body>
 </html>

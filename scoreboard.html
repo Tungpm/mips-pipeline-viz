@@ -3,15 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <title>Basic Scoreboard</title>
+    <!-- JQuery -->
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- adds styling for html -->
+	<link rel="stylesheet" type="text/css" href="css/scoreboard.css">
 
-    <!-- P5 library -->
-    <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
-
-    <!-- this line removes any default padding and style. you might only need one of these values set. -->
-    <style> body {padding: 0; margin: 0;} </style>
+	<script language="javascript" type="text/javascript" src="scoreboard.js"></script>
 </head>
 <body>
+	<div class="heading">
+		Scoreboard Visualization
+	</div>
+	<div class="leftPane">
+		
+		<div class="InstructStatusContainer"></div>
+
+		<div class="instructInputContainer">
+			<div>Format: Instruction i j k</div>
+			<textarea class="instructs" style="width:100%;height:100%"></textarea>
+			<div class="createBtn" onclick="createRegResultStatus()">Create Register Result Status</div>
+		</div>
 
 
+
+
+	</div><!--
+	--><div class="rightPane">
+		
+		<div class="tableContainer">
+			<table class="hardwareTable">
+			  <tr>
+			    <th>Funcitonal Unit</th>
+			    <th>Latency</th>
+			    <th>Count</th>
+			  </tr>
+			  <tr>
+			    <th>INTEGER</th>
+			    <td><input id="latInt" type="text" style="width:90%"></td>
+			    <td><input id="cInt" type="text" style="width:90%"></td>
+			  </tr>
+			  <tr>
+			    <th>FP Add</th>
+			    <td><input id="latAdd" type="text" style="width:90%"></td>
+			    <td><input id="cAdd" type="text" style="width:90%"></td>
+			  </tr>
+			  <tr>
+			    <th>Mult</th>
+			    <td><input id="latMult" type="text" style="width:90%"></td>
+			    <td><input id="cMult" type="text" style="width:90%"></td>
+			  </tr>
+			   <tr>
+			    <th>Div</th>
+			    <td><input id="latDiv" type="text" style="width:90%"></td>
+			    <td><input id="cDiv" type="text" style="width:90%"></td>
+			  </tr>
+			  <tr>
+			    <th>Load</th>
+			    <td><input id="latLoad" type="text" style="width:90%"></td>
+			    <td><input id="cLoad" type="text" style="width:90%"></td>
+			  </tr>
+			  <tr>
+			    <th>Store</th>
+			    <td><input id="latStore" type="text" style="width:90%"></td>
+			    <td><input id="cStore" type="text" style="width:90%"></td>
+			  </tr>
+			</table>
+
+			<div class="createBtn" onclick="InitializeFUTable()">Create FU Status</div>
+		</div>
+
+		<div class="FUStatusContainer"></div>
+
+		<div class="RegResultStatusContainer">
+			<table class="RegResultsStatusTable">
+			  <tr>
+			    <th></th>
+			    <th>F0</th>
+			    <th>F2</th>
+				<th>F4</th>
+			    <th>F6</th>
+				<th>F8</th>
+				<th>F10</th>
+				<th>F12</th>
+				<th>F14</th>
+				<th>F16</th>
+				<th>F18</th>
+				<th>F20</th>
+				<th>F22</th>
+				<th>F24</th>
+				<th>F26</th>
+				<th>F28</th>
+				<th>F30</th>
+			  </tr>
+			  <tr>
+			    <th>FU</th>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			    <td></td>
+			  </tr>
+			</table>
+		</div>
+
+
+
+	</div>
+	<script>
+		window.onload = function() {
+			h = $(".heading").height();
+			$(".leftPane").height($(window).height()-h);
+			$(".rightPane").height($(window).height()-h);
+		}
+
+		function createFUStatus() {
+			/* Get the number of FU units to make */
+			var numInt = parseInt($("#cInt").val());
+			var numAdd = parseInt($("#cAdd").val());
+			var numMult = parseInt($("#cMult").val());
+			var numDiv = parseInt($("#cDiv").val());
+			var numLoad = parseInt($("#cLoad").val());
+			var numStore = parseInt($("#cStore").val());
+			var numFUList = [numInt, numAdd, numMult, numDiv, numLoad, numStore];
+			var FUNames = ["Integer","FP Add", "Mult", "Div", "Load", "Store"];
+			/* Construct HTML for FU status table */
+			var FUStatusHTML = "<table class='FUStatusTable'>";
+			FUStatusHTML += "<tr>";
+				FUStatusHTML += "<th>Time</th>";
+		    	FUStatusHTML += "<th>Name</th>";
+		    	FUStatusHTML += "<th>Busy</th>";
+				FUStatusHTML += "<th>Op</th>";
+				FUStatusHTML += "<th>Fi</th>";
+				FUStatusHTML += "<th>Fj</th>";
+				FUStatusHTML += "<th>Fk</th>";
+				FUStatusHTML += "<th>Qj</th>";
+				FUStatusHTML += "<th>Qk</th>";
+				FUStatusHTML += "<th>Rj</th>";
+				FUStatusHTML += "<th>Rk</th>";
+		  	FUStatusHTML += "</tr>";
+			// loop of each of the 4 types of FU units
+			for (var i=0; i < numFUList.length; i++) {
+				// create j FU units of a type
+				for (var j=0; j < numFUList[i]; j++) {
+					FUStatusHTML += "<tr>";
+						FUStatusHTML += "<td></td><td>"+FUNames[i]+parseInt(j+1)+"</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+					FUStatusHTML += "</tr>";
+				}
+			}
+			FUStatusHTML += "</table>";
+			/* Add HTML */
+			$(".FUStatusContainer").html(FUStatusHTML);
+		}
+
+		function createRegResultStatus() {
+			/* Get the inputed instructions */
+			var inputText = $(".instructs").val();
+			/* Parse the instructions */
+			var instructs = inputText.split("\n");
+			for (var l=0; l < instructs.length; l++) {
+				instructs[l] = instructs[l].split(" ");
+			}
+			/* Create html for instruction status table */
+			var InstructStatusHTML = "<table class='InstructStatusTable'>";
+			InstructStatusHTML += "<tr>";
+		    	InstructStatusHTML += "<th>Instruction</th>";
+		    	InstructStatusHTML += "<th>i</th>";
+				InstructStatusHTML += "<th>j</th>";
+				InstructStatusHTML += "<th>k</th>";
+				InstructStatusHTML += "<th>FU</th>";
+				InstructStatusHTML += "<th>Issue</th>";
+				InstructStatusHTML += "<th>Read</th>";
+				InstructStatusHTML += "<th>Execute</th>";
+				InstructStatusHTML += "<th>Write</th>";
+		  	InstructStatusHTML += "</tr>";
+			// loop through each of the inputed instructions
+			for (var i=0; i < instructs.length; i++) {
+				InstructStatusHTML += "<tr>";
+				for (var j=0; j < instructs[i].length; j++) {
+					InstructStatusHTML += "<td>"+instructs[i][j]+"</td>";
+				}
+				InstructStatusHTML += ("<td></td>").repeat(4-j) + ("<td></td>").repeat(5);
+				InstructStatusHTML += "</tr>";
+			}
+			InstructStatusHTML += "</table>";
+			/* Add HTML */
+			$(".InstructStatusContainer").html(InstructStatusHTML);
+		}
+		
+
+
+
+	</script>
 </body>
 </html>
