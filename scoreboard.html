@@ -19,11 +19,12 @@
 	</div>
 	<div class="leftPane">
 
+		<div class="createBtn" onclick="Initialize()">Initialize Scoreboard</div>
 		<div class="InstructStatusContainer"></div>
 
 		<div class="instructInputContainer">
 			<!--div></div-->
-			<textarea class="instructs" style="width:100%;height:100%"></textarea>
+			<textarea class="instructs" style="width:100%;height:100%">add t2 t1 t0&#13;add t3 t2 t1</textarea>
 			<div class="createBtn" onclick="InitInstrStatusTable()">Create Instruction Status Table</div>
 		</div>
 
@@ -35,13 +36,15 @@
 
 		<div class="bigBox">
 			<div class="errorBox"></div><!--
-		--><div class="ControlBox">
+			--><div class="ControlBox">
 				<div id="clock" class="clk">Clock: 0</div>
 				<div class="clkBtn" onclick="clockBack()"> < </div>
 				<div class="clkBtn" onclick="clockForward()"> > </div>
 			</div>
 		</div>
-		
+
+		<div class="FUStatusContainer"></div>
+
 		<div class="tableContainer">
 			<table class="hardwareTable">
 			  <tr>
@@ -51,41 +54,40 @@
 			  </tr>
 			  <tr>
 			    <th>INTEGER</th>
-			    <td><input id="latInt" type="text" style="width:90%"></td>
-			    <td><input id="cInt" type="text" style="width:90%"></td>
+			    <td><input id="latInt" type="text" style="width:90%" value="1"></td>
+			    <td><input id="cInt" type="text" style="width:90%" value="1"></td>
 			  </tr>
 			  <tr>
 			    <th>FP Add</th>
-			    <td><input id="latAdd" type="text" style="width:90%"></td>
-			    <td><input id="cAdd" type="text" style="width:90%"></td>
+			    <td><input id="latAdd" type="text" style="width:90%" value="2"></td>
+			    <td><input id="cAdd" type="text" style="width:90%" value="1"></td>
 			  </tr>
 			  <tr>
 			    <th>Mult</th>
-			    <td><input id="latMult" type="text" style="width:90%"></td>
-			    <td><input id="cMult" type="text" style="width:90%"></td>
+			    <td><input id="latMult" type="text" style="width:90%" value="10"></td>
+			    <td><input id="cMult" type="text" style="width:90%" value="2"></td>
 			  </tr>
 			   <tr>
 			    <th>Div</th>
-			    <td><input id="latDiv" type="text" style="width:90%"></td>
-			    <td><input id="cDiv" type="text" style="width:90%"></td>
+			    <td><input id="latDiv" type="text" style="width:90%" value="40"></td>
+			    <td><input id="cDiv" type="text" style="width:90%" value="1"></td>
 			  </tr>
 			  <tr>
 			    <th>Load</th>
-			    <td><input id="latLoad" type="text" style="width:90%"></td>
-			    <td><input id="cLoad" type="text" style="width:90%"></td>
+			    <td><input id="latLoad" type="text" style="width:90%" value="1"></td>
+			    <td><input id="cLoad" type="text" style="width:90%" value="0"></td>
 			  </tr>
 			  <tr>
 			    <th>Store</th>
-			    <td><input id="latStore" type="text" style="width:90%"></td>
-			    <td><input id="cStore" type="text" style="width:90%"></td>
+			    <td><input id="latStore" type="text" style="width:90%" value="1"></td>
+			    <td><input id="cStore" type="text" style="width:90%" value="0"></td>
 			  </tr>
 			</table>
-
-			<div class="createBtn" onclick="InitFUTable()">Create FU Status</div>
 		</div>
 
-		<div class="FUStatusContainer"></div>
 
+
+		<!--
 		<div class="RegResultStatusContainer">
 			<table class="RegResultsStatusTable">
 			  <tr>
@@ -128,6 +130,7 @@
 			  </tr>
 			</table>
 		</div>
+	-->
 
 	</div>
 	<script>

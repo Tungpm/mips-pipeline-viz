@@ -6,6 +6,7 @@ var FunctionalUnit = function (name, type, latency) {
     this.latency = latency;
     this.instr = null;
 
+    this.time = 0;
     this.isBusy = (this.instr == null)?false:true;
     this.op = (this.instr == null)?"":this.instr.type;
     this.f_i = (this.instr == null)?"":this.instr.f_i;
@@ -23,11 +24,12 @@ var Instruction = function (instr) {
     // Parsing the components of the instruction
     var pieces_arr = getInstructionPieces(instr);
 
-    this.type = pieces_arr[0];
+    this.op = pieces_arr[0];
     this.f_i = pieces_arr[1];
     this.f_j = pieces_arr[2];
     this.f_k = pieces_arr[3];
 
+    this.type = (this.op in instToFU)? instToFU[this.op] : "INT";
     this.functionalUnit = null;
     this.issueTime = 0;
     this.readTime = 0;
@@ -43,7 +45,7 @@ var ScoreBoard = function() {
 }
 
 //Initialize the functional units
-ScoreBoard.prototype.initialize = function() {
+ScoreBoard.prototype.loadFU = function() {
     this.functionalUnits = [];
 
 
@@ -83,7 +85,7 @@ ScoreBoard.prototype.initialize = function() {
     }
 }
 
-ScoreBoard.prototype.loadInstructions = function() {
+ScoreBoard.prototype.loadInst = function() {
     //TODO: Parse the instructions in
     this.instructions = [];
     this.CLK = 0;
@@ -122,12 +124,12 @@ ScoreBoard.prototype.displayFU = function() {
         var unit = this.functionalUnits[i];
         FUStatusHTML += "<tr>";
         if (unit.isBusy) {
-            FUStatusHTML += "<td></td><td>" + unit.name + "</td><td>" + unit.isBusy + "</td><td>" + unit.op +
-                "</td><td>" + unit.f_i + "</td><td>" + unit.f_j + "</td><td>" + unit.f_k +
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy +
+                "</td><td>" + unit.op + "</td><td>" + unit.f_i + "</td><td>" + unit.f_j + "</td><td>" + unit.f_k +
                 "</td><td>" + ((unit.q_j == null) ? "" : unit.q_j.name) + "</td><td>" + ((unit.q_k == null) ? "" : unit.q_k.name) +
                 "</td><td>" + unit.r_j + "</td><td>" + unit.r_k + "</td>";
         } else {
-            FUStatusHTML += "<td></td><td>"+ unit.name + "</td><td>" + unit.isBusy +
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy +
                 "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
         }
         FUStatusHTML += "</tr>";
@@ -158,11 +160,12 @@ ScoreBoard.prototype.displayInst = function() {
         var inst = this.instructions[i];
         InstructStatusHTML += "<tr>";
 
-        InstructStatusHTML += "<td>"+inst.type+"</td><td>" +
+        InstructStatusHTML += "<td>"+inst.op+"</td><td>" +
             inst.f_i+"</td><td>" + inst.f_j+"</td><td>" + inst.f_k+"</td><td>" +
             ((inst.functionalUnit == null)?"":inst.functionalUnit.name)+"</td><td>"+
-            inst.issueTime+"</td><td>" + inst.readTime+"</td><td>" + inst.executeCompleteTime+"</td><td>" +
-            inst.writeTime+"</td>";
+            ((inst.issueTime==0)?"":inst.issueTime)+"</td><td>" + ((inst.readTime==0)?"":inst.readTime)+"</td><td>" +
+            ((inst.executeCompleteTime==0)?"":inst.executeCompleteTime)+"</td><td>" +
+            ((inst.writeTime==0)?"":inst.writeTime)+"</td>";
         InstructStatusHTML += "</tr>";
     }
     InstructStatusHTML += "</table>";
@@ -179,23 +182,22 @@ ScoreBoard.prototype.next = function() {
     this.displayFU();
 }
 
-
-function InitFUTable() {
-    s = new ScoreBoard();
-    s.initialize();
-    s.displayFU();
-}
-
-function InitInstrStatusTable() {
+function Initialize() {
     $(".errorBox").html("");
+    //Functional Units
+    s.loadFU();
+    s.displayFU();
+
+    //Instructions
     try {
-        s.loadInstructions();
+        s.loadInst();
     } catch (e) {
         $(".errorBox").html("Error in the Instruction List");
     }
-    
+
     s.displayInst();
 }
+
 function clockForward() {
     s.next();
 }
@@ -204,6 +206,8 @@ function clockBack() {
 
 }
 
-
+var instToFU = {
+    'add.d':'ADD', 'sub.d':'ADD', 'mul.d':'MULT', 'div.d':'DIV', 'l.d':'LOAD', 's.d':'STORE'
+};
 var s = new ScoreBoard();
 s.displayFU();
