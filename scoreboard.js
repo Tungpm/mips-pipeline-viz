@@ -4,9 +4,13 @@ var FunctionalUnit = function (name, type, latency) {
     this.type = type;
     this.name = name;
     this.latency = latency;
-    this.instr = null;
 
+    this.instr = null;
+    this.reading = false;
+    this.executing = false;
+    this.writing = false;
     this.time = 0;
+
     this.isBusy = function(){return((this.instr == null)?false:true);};
     this.op = function(){return((this.instr == null)?"":this.instr.type);};
     this.f_i = function(){return((this.instr == null)?"":this.instr.f_i);};
@@ -29,7 +33,7 @@ var Instruction = function (instr) {
     this.f_j = pieces_arr[2];
     this.f_k = pieces_arr[3];
 
-    this.type = (this.op in instToFU)? instToFU[this.op] : "INT";
+    this.type = function(){return(((this.op in instToFU)? instToFU[this.op] : "INT"));};
     this.functionalUnit = null;
     this.issueTime = 0;
     this.readTime = 0;
@@ -41,7 +45,12 @@ var Instruction = function (instr) {
 var ScoreBoard = function() {
     this.instructions = [];
     this.functionalUnits = [];
-    this.instructions_running = [];
+
+    this.instruction_issued = null;
+    this.instruction_read = null;
+    this.instruction_executed = null;
+
+
     this.instruction_toBeIssued = 0;
     this.FUdict = {'INT':[], 'ADD':[], 'MULT':[], 'DIV':[], 'LOAD':[], 'STORE':[]};
     this.clk = 0;
@@ -196,7 +205,6 @@ ScoreBoard.prototype.next = function() {
     this.clk = this.clk + 1;
 
     var Inst = this.instructions;
-    var Inst_Run = this.instructions_running;
     var FU = this.functionalUnits;
 
     //Issue
@@ -204,8 +212,8 @@ ScoreBoard.prototype.next = function() {
     var hasHazard = false;
     //First instruction in line waiting to be issued
     //Check instructions running for WAW hazard
-    for (var curr_inst in Inst_Run) {
-        if (curr_inst.f_i == issueInst.f_i) {
+    for (var curr_inst in FU) {
+        if ((curr_inst.isBusy()) & (curr_inst.f_i == issueInst.f_i)) {
             hasHazard = true;
             break;
         }
@@ -213,22 +221,87 @@ ScoreBoard.prototype.next = function() {
     }
 
     //Check functional units for structural hazards
-    if (!hasHazard) {
+    if (!hasHazard & this.instruction_issued == null) {
         for (var fu in this.FUdict[issueInst.type]) {
-            if (!fu.isBusy) {
+            if (!fu.isBusy()) {
                 //If not busy then we can issue
+                hasHazard = false;
+                this.instructions_issued = issueInst;
+                this.instruction_toBeIssued += 1;
+
                 fu.instr = issueInst;
-                Inst_Run.push(issueInt);
+                fu.canExecute = false;
+                issueInst.functionalUnit = fu;
+                issueInst.issueTime = this.clk;
                 break;
+            }
+            //If no FU is available then structural hazard, can't be issued
+        }
+    }
+
+    //Read
+    //Has to check for RAW hazard
+    hasHazard = false;
+    if (this.instruction_issued != null) {
+        for (var curr_inst in FU) {
+            if ((curr_inst.isBusy()) & ((curr_inst.f_i == this.instruction_issued.f_j) | (curr_inst.f_i == this.instruction_issued.f_k))) {
+                hasHazard = true;
+                break;
+            }
+
+        }
+    }
+    if ((!hasHazard)&(this.instruction_read == null)&(this.instruction_issued != null)) {
+        //No hazard, can proceed with the read and clear the issue
+        this.instruction_read = this.instruction_issued;
+        this.instruction_read.readTime = this.clk;
+        this.instruction_issued = null;
+    }
+
+
+    //Execute
+    for (var fu in FU) {
+        if ((fu.isBusy()) & (fu.executing)) {
+            fu.time = fu.time+1;
+            if (fu.time >= fu.latency) {
+                //Done executing
+                var instr = fu.instr;
+                instr.executeCompleteTime = this.clk;
+                fu.executing = false;
+                fu.writing = true;
+                if (this.instruction_executed == null) {
+                    this.instruction_executed = instr;
+                }
             }
         }
     }
-    //Read
 
-    //Execute
+    //Done executing one cycle, add the newly read instruction
+    if (this.instruction_read != null) {
+        this.instruction_read.functionalUnit.reading = false;
+        this.instruction_read.functionalUnit.executing = true;
+        this.instruction_read= null;
+    }
 
     //Write
+    //Has to check for WAR hazard
+    hasHazard = false;
+    for (var curr_inst in FU) {
+        if ((curr_inst.isBusy()) & ((this.instruction_executed.f_i == curr_instr.f_j)|(this.instruction_executed.f_i == curr_instr.f_k))) {
+            hasHazard = true;
+        }
+    }
 
+    if (!hasHazard) {
+        var instr = this.instruction_executed;
+        instr.writeTime = this.clk;
+        var fu = instr.functionalUnit;
+        fu.instr = null;
+        fu.time = 0;
+        fu.q_j = null;
+        fu.q_k = null;
+        instr.functionalUnit = null;
+    }
 
     // Display updated things
     this.displayFU();
