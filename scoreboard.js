@@ -35,10 +35,10 @@ var Instruction = function (instr) {
     this.f_k = pieces_arr[3];
 
     this.functionalUnit = null;
-    this.issueTime = 0;
-    this.readTime = 0;
-    this.executeCompleteTime = 0;
-    this.writeTime = 0;
+    this.issueTime = Infinity;
+    this.readTime = Infinity;
+    this.executeCompleteTime = Infinity;
+    this.writeTime = Infinity;
 }
 
 Instruction.prototype.getType = function() { return(((this.op in instToFU)? instToFU[this.op] : "INT")); }
@@ -186,9 +186,9 @@ ScoreBoard.prototype.displayInst = function() {
         InstructStatusHTML += "<td>"+inst.op+"</td><td>" +
             inst.f_i+"</td><td>" + inst.f_j+"</td><td>" + inst.f_k+"</td><td>" +
             ((inst.functionalUnit == null)?"":inst.functionalUnit.name)+"</td><td>"+
-            ((inst.issueTime==0)?"":inst.issueTime)+"</td><td>" + ((inst.readTime==0)?"":inst.readTime)+"</td><td>" +
-            ((inst.executeCompleteTime==0)?"":inst.executeCompleteTime)+"</td><td>" +
-            ((inst.writeTime==0)?"":inst.writeTime)+"</td>";
+            ((inst.issueTime==Infinity)?"":inst.issueTime)+"</td><td>" + ((inst.readTime==Infinity)?"":inst.readTime)+"</td><td>" +
+            ((inst.executeCompleteTime==Infinity)?"":inst.executeCompleteTime)+"</td><td>" +
+            ((inst.writeTime==Infinity)?"":inst.writeTime)+"</td>";
         InstructStatusHTML += "</tr>";
     }
     InstructStatusHTML += "</table>";
@@ -212,8 +212,6 @@ ScoreBoard.prototype.next = function() {
             fu.clearing = false;
             fu.instr = null;
             fu.time = 0;
-            fu.q_j = null;
-            fu.q_k = null;
         }
     }
 
@@ -226,7 +224,7 @@ ScoreBoard.prototype.next = function() {
             hasHazard = false;
             for (var j = 0; j<FU.length; j++) {
                 var readFu = FU[j];
-                if ((readFu.instr == null)||(readFu.instr.issueTime > write_instr.issueTime)) {
+                if ((readFu.instr == null)||(readFu.instr.issueTime > write_instr.issueTime)||(readFu.instr.readTime < this.clk)) {
                     continue;
                 }
                 if ((readFu.isBusy())&& ((write_instr.f_i == readFu.f_j())||(write_instr.f_i == readFu.f_k()))) {
@@ -267,7 +265,7 @@ ScoreBoard.prototype.next = function() {
             hasHazard = false;
             for (var j = 0; j<FU.length; j++) {
                 var write_fu = FU[j];
-                if ((write_fu.instr == null)||(write_fu.instr.issueTime > read_instr.issueTime)) {
+                if ((write_fu.instr == null)||(write_fu.instr.issueTime > read_instr.issueTime)||(write_fu.instr.writeTime < this.clk)) {
                     continue;
                 }
                 if ((write_fu.isBusy())&&((write_fu.f_i() == read_instr.f_j) || (write_fu.f_i() == read_instr.f_k))) {
@@ -279,6 +277,8 @@ ScoreBoard.prototype.next = function() {
                 read_instr.readTime = this.clk;
                 read_instr.functionalUnit.reading = false;
                 read_instr.functionalUnit.executing = true;
+                read_instr.functionalUnit.q_j = null;
+                read_instr.functionalUnit.q_k = null;
             }
         }
     }
@@ -290,11 +290,11 @@ ScoreBoard.prototype.next = function() {
     //Check instructions running for WAW hazard
     if (issueInst != null) {
         for (var i = 0; i<FU.length; i++) {
-            var fu = FU[i];
-            if (fu.instr == null) {
+            var write_fu = FU[i];
+            if ((write_fu.instr == null)||(write_fu.instr.writeTime < this.clk)) {
                 continue;
             }
-            if ((fu.isBusy())&& (fu.f_i() == issueInst.f_i)) {
+            if ((write_fu.isBusy())&& (write_fu.f_i() == issueInst.f_i)) {
                 hasHazard = true;
                 break;
             }
@@ -305,15 +305,29 @@ ScoreBoard.prototype.next = function() {
     if ((!hasHazard) && (issueInst != null)) {
         var inst_type = issueInst.getType();
         for (var i = 0; i < this.FUdict[inst_type].length; i++) {
-            fu = this.FUdict[inst_type][i];
-            if (!fu.isBusy()) {
+            issue_fu = this.FUdict[inst_type][i];
+            if (!issue_fu.isBusy()) {
                 //If not busy then we can issue
                 this.instruction_toBeIssued += 1;
-
-                fu.instr = issueInst;
-                fu.reading = true;
-                issueInst.functionalUnit = fu;
+                issueInst.functionalUnit = issue_fu;
                 issueInst.issueTime = this.clk;
+
+                //Find functional unit result dependency
+                for (var j = 0; j<FU.length; j++) {
+                    var write_fu = FU[j];
+                    if ((write_fu.instr == null)||(write_fu.instr.issueTime > issueInst.issueTime)||(write_fu.instr.writeTime < this.clk)) {
+                        continue;
+                    }
+                    if (write_fu.f_i() == issueInst.f_j) {
+                        issue_fu.q_j = write_fu;
+                    }
+                    if (write_fu.f_i() == issueInst.f_k) {
+                        issue_fu.q_k = write_fu;
+                    }
+                }
+                issue_fu.instr = issueInst;
+                issue_fu.reading = true;
+
                 break;
             }
             //If no FU is available then structural hazard, can't be issued
