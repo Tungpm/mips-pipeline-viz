@@ -14,7 +14,7 @@ var FunctionalUnit = function (name, type, latency) {
 
     this.q_j = null;
     this.q_k = null;
-}
+};
 
 FunctionalUnit.prototype.isBusy = function(){return((this.instr == null)?false:true);}
 FunctionalUnit.prototype.op = function(){return((this.instr == null)?"":this.instr.op);}
@@ -39,7 +39,7 @@ var Instruction = function (instr) {
     this.readTime = Infinity;
     this.executeCompleteTime = Infinity;
     this.writeTime = Infinity;
-}
+};
 
 Instruction.prototype.getType = function() { return(((this.op in instToFU)? instToFU[this.op] : "INT")); }
 
@@ -49,9 +49,14 @@ var ScoreBoard = function() {
     this.functionalUnits = [];
 
     this.instruction_toBeIssued = 0;
+    this.numInstruction_toCompute = 0;
     this.FUdict = {'INT':[], 'ADD':[], 'MULT':[], 'DIV':[], 'LOAD':[], 'STORE':[]};
     this.clk = 0;
-}
+    this.maxCycle;
+
+    this.FUHistory = [];
+    this.HTMLHistory = [];
+};
 
 //Initialize the functional units
 ScoreBoard.prototype.loadFU = function() {
@@ -108,7 +113,7 @@ ScoreBoard.prototype.loadFU = function() {
         this.FUdict[type].push(unit);
         this.functionalUnits.push(unit);
     }
-}
+};
 
 ScoreBoard.prototype.loadInst = function() {
     this.CLK = 0;
@@ -122,80 +127,21 @@ ScoreBoard.prototype.loadInst = function() {
         this.instructions.push(new Instruction(instructs[l]));
     }
     
-
-}
+    this.numInstruction_toCompute = this.instructions.length;
+};
 
 ScoreBoard.prototype.displayFU = function() {
-    /* Construct HTML for FU status table */
-    var FUStatusHTML = "<table class='FUStatusTable'>";
-    FUStatusHTML += "<tr>";
-    FUStatusHTML += "<th>Time</th>";
-    FUStatusHTML += "<th>Name</th>";
-    FUStatusHTML += "<th>Busy</th>";
-    FUStatusHTML += "<th>Op</th>";
-    FUStatusHTML += "<th>Fi</th>";
-    FUStatusHTML += "<th>Fj</th>";
-    FUStatusHTML += "<th>Fk</th>";
-    FUStatusHTML += "<th>Qj</th>";
-    FUStatusHTML += "<th>Qk</th>";
-    FUStatusHTML += "<th>Rj</th>";
-    FUStatusHTML += "<th>Rk</th>";
-    FUStatusHTML += "</tr>";
-
-    // loop each functional unit to generate
-    for (var i=0; i < this.functionalUnits.length; i++) {
-        var unit = this.functionalUnits[i];
-        FUStatusHTML += "<tr>";
-        if (unit.isBusy()) {
-            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
-                "</td><td>" + unit.op() + "</td><td>" + unit.f_i() + "</td><td>" + unit.f_j() + "</td><td>" + unit.f_k() +
-                "</td><td>" + ((unit.q_j == null) ? "" : unit.q_j.name) + "</td><td>" + ((unit.q_k == null) ? "" : unit.q_k.name) +
-                "</td><td>" + unit.r_j() + "</td><td>" + unit.r_k() + "</td>";
-        } else {
-            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
-                "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
-        }
-        FUStatusHTML += "</tr>";
-    }
-    FUStatusHTML += "</table>";
     /* Add HTML */
-    $(".FUStatusContainer").html(FUStatusHTML);
+    $(".FUStatusContainer").html(this.FUHistory[this.clk]);
 
     $("#clock").html("Clock: "+s.clk);
-}
+};
 
 ScoreBoard.prototype.displayInst = function() {
-    /* Create html for instruction status table */
-    var InstructStatusHTML = "<table class='InstructStatusTable'>";
-    InstructStatusHTML += "<tr>";
-    InstructStatusHTML += "<th>Instruction</th>";
-    InstructStatusHTML += "<th>i</th>";
-    InstructStatusHTML += "<th>j</th>";
-    InstructStatusHTML += "<th>k</th>";
-    InstructStatusHTML += "<th>FU</th>";
-    InstructStatusHTML += "<th>Issue</th>";
-    InstructStatusHTML += "<th>Read</th>";
-    InstructStatusHTML += "<th>Execute</th>";
-    InstructStatusHTML += "<th>Write</th>";
-    InstructStatusHTML += "</tr>";
-    // loop through each of the inputed instructions
-    for (var i=0; i < this.instructions.length; i++) {
-        var inst = this.instructions[i];
-        InstructStatusHTML += "<tr>";
-
-        InstructStatusHTML += "<td>"+inst.op+"</td><td>" +
-            inst.f_i+"</td><td>" + inst.f_j+"</td><td>" + inst.f_k+"</td><td>" +
-            ((inst.functionalUnit == null)?"":inst.functionalUnit.name)+"</td><td>"+
-            ((inst.issueTime==Infinity)?"":inst.issueTime)+"</td><td>" + ((inst.readTime==Infinity)?"":inst.readTime)+"</td><td>" +
-            ((inst.executeCompleteTime==Infinity)?"":inst.executeCompleteTime)+"</td><td>" +
-            ((inst.writeTime==Infinity)?"":inst.writeTime)+"</td>";
-        InstructStatusHTML += "</tr>";
-    }
-    InstructStatusHTML += "</table>";
     /* Add HTML */
-    $(".InstructStatusContainer").html(InstructStatusHTML);
+    $(".InstructStatusContainer").html(this.HTMLHistory[this.clk]);
 
-}
+};
 
 ScoreBoard.prototype.next = function() {
     //Update
@@ -212,6 +158,7 @@ ScoreBoard.prototype.next = function() {
             fu.clearing = false;
             fu.instr = null;
             fu.time = 0;
+            this.numInstruction_toCompute -= 1;
         }
     }
 
@@ -333,40 +280,135 @@ ScoreBoard.prototype.next = function() {
             //If no FU is available then structural hazard, can't be issued
         }
     }
+};
 
-    // Display updated things
-    this.displayFU();
-    this.displayInst();
-}
 
 function Initialize() {
     $(".errorBox").html("");
     s = new ScoreBoard();
 
-    //Functional Units
+    //Functional Units and Instructions
     s.loadFU();
-    s.displayFU();
-
-    //Instructions
     try {
         s.loadInst();
     } catch (e) {
         $(".errorBox").html("Error in the Instruction List");
+        return;
     }
 
+    //Gener
+    s.generateAllCycles();
+
+    //Display the 0 cycle
+    s.displayFU();
     s.displayInst();
 }
 
+ScoreBoard.prototype.generateFUhtml = function() {
+    /* Construct HTML for FU status table */
+    var FUStatusHTML = "<table class='FUStatusTable'>";
+    FUStatusHTML += "<tr>";
+    FUStatusHTML += "<th>Time</th>";
+    FUStatusHTML += "<th>Name</th>";
+    FUStatusHTML += "<th>Busy</th>";
+    FUStatusHTML += "<th>Op</th>";
+    FUStatusHTML += "<th>Fi</th>";
+    FUStatusHTML += "<th>Fj</th>";
+    FUStatusHTML += "<th>Fk</th>";
+    FUStatusHTML += "<th>Qj</th>";
+    FUStatusHTML += "<th>Qk</th>";
+    FUStatusHTML += "<th>Rj</th>";
+    FUStatusHTML += "<th>Rk</th>";
+    FUStatusHTML += "</tr>";
+
+    // loop each functional unit to generate
+    for (var i=0; i < this.functionalUnits.length; i++) {
+        var unit = this.functionalUnits[i];
+        FUStatusHTML += "<tr>";
+        if (unit.isBusy()) {
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
+              "</td><td>" + unit.op() + "</td><td>" + unit.f_i() + "</td><td>" + unit.f_j() + "</td><td>" + unit.f_k() +
+              "</td><td>" + ((unit.q_j == null) ? "" : unit.q_j.name) + "</td><td>" + ((unit.q_k == null) ? "" : unit.q_k.name) +
+              "</td><td>" + unit.r_j() + "</td><td>" + unit.r_k() + "</td>";
+        } else {
+            FUStatusHTML += "<td>" + unit.time + "</td><td>" + unit.name + "</td><td>" + unit.isBusy() +
+              "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+        }
+        FUStatusHTML += "</tr>";
+    }
+    FUStatusHTML += "</table>";
+
+    return(FUStatusHTML);
+};
+
+ScoreBoard.prototype.generateINSThtml = function() {
+    /* Create html for instruction status table */
+    var InstructStatusHTML = "<table class='InstructStatusTable'>";
+    InstructStatusHTML += "<tr>";
+    InstructStatusHTML += "<th>Instruction</th>";
+    InstructStatusHTML += "<th>i</th>";
+    InstructStatusHTML += "<th>j</th>";
+    InstructStatusHTML += "<th>k</th>";
+    InstructStatusHTML += "<th>FU</th>";
+    InstructStatusHTML += "<th>Issue</th>";
+    InstructStatusHTML += "<th>Read</th>";
+    InstructStatusHTML += "<th>Execute</th>";
+    InstructStatusHTML += "<th>Write</th>";
+    InstructStatusHTML += "</tr>";
+    // loop through each of the inputed instructions
+    for (var i=0; i < this.instructions.length; i++) {
+        var inst = this.instructions[i];
+        InstructStatusHTML += "<tr>";
+
+        InstructStatusHTML += "<td>"+inst.op+"</td><td>" +
+          inst.f_i+"</td><td>" + inst.f_j+"</td><td>" + inst.f_k+"</td><td>" +
+          ((inst.functionalUnit == null)?"":inst.functionalUnit.name)+"</td><td>"+
+          ((inst.issueTime==Infinity)?"":inst.issueTime)+"</td><td>" + ((inst.readTime==Infinity)?"":inst.readTime)+"</td><td>" +
+          ((inst.executeCompleteTime==Infinity)?"":inst.executeCompleteTime)+"</td><td>" +
+          ((inst.writeTime==Infinity)?"":inst.writeTime)+"</td>";
+        InstructStatusHTML += "</tr>";
+    }
+    InstructStatusHTML += "</table>";
+    return(InstructStatusHTML);
+};
+
+ScoreBoard.prototype.generateAllCycles = function() {
+    this.FUHistory[this.clk] = this.generateFUhtml();
+    this.HTMLHistory[this.clk] = this.generateINSThtml();
+    while (this.numInstruction_toCompute > 0) {
+        this.next();
+        this.FUHistory.push(this.generateFUhtml());
+        this.HTMLHistory.push(this.generateINSThtml());
+    }
+
+    /* Reset clk cycle after generate every content */
+    this.clk = 0;
+};
+
 function clockForward() {
-    s.next();
+    if (s.clk < s.HTMLHistory.length - 1) s.clk += 1;
+    s.displayFU();
+    s.displayInst();
 }
 
 function clockBack() {
+    if (s.clk > 0) s.clk -= 1
+    s.displayFU();
+    s.displayInst();
+}
 
+function clockBegin() {
+    s.clk = 0;
+    s.displayFU();
+    s.displayInst();
+}
+
+function clockEnd() {
+    s.clk = s.HTMLHistory.length - 1;
+    s.displayFU();
+    s.displayInst();
 }
 
 var instToFU = {
     'add.d':'ADD', 'sub.d':'ADD', 'mul.d':'MULT', 'div.d':'DIV', 'l.d':'LOAD', 's.d':'STORE'
 };
-var s = new ScoreBoard();
-s.displayFU();
